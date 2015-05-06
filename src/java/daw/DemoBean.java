@@ -52,8 +52,7 @@ public class DemoBean implements Serializable  {
     }
 
     public String upload() throws IOException {
-        //Tomcat
-        // file1.write("C:\\files\\"+getFilename(file1));
+
         final FacesContext facesContext=FacesContext.getCurrentInstance();
         final ExternalContext externalContext=facesContext.getExternalContext();
         InputStream inputStream = file1.getInputStream();
