@@ -64,17 +64,8 @@ public class DemoBean implements Serializable {
      * @throws IOException errir lectura/escritura
      */
     public boolean upload(String n) throws IOException {
-        String img = getFilename(fichero);
-        
-        
-        
-        if (img.matches("([^\\s]+(\\.(?i)(jpg|png|gif|bmp))$)")) {
-
-            
-            
-            
-            
-            
+        String img = getFilename(fichero);     
+        if (img.matches("([^\\s]+(\\.(?i)(jpg|png|gif|bmp))$)")) {     
             String extension = "";
             //Devuelve el último índice, diviendo por puntos
             int i = getFilename(fichero).lastIndexOf('.'); 
@@ -106,9 +97,7 @@ public class DemoBean implements Serializable {
             }
             outputStream.close();
             inputStream.close();
-            setNombre(n + "." + extension);
-            
-            
+            setNombre(n + "." + extension);                 
             return true;
         }
         return false;
