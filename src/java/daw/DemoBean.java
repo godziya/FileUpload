@@ -89,7 +89,7 @@ public class DemoBean implements Serializable  {
         outputStream.close();
         inputStream.close();
         
-        setNombre(n);
+        setNombre(n+"."+extension);
        
         return "";
     }
