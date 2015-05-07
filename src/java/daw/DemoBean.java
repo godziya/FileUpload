@@ -10,93 +10,114 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.servlet.http.Part;
 
-
 @Named
 @ViewScoped
-public class DemoBean implements Serializable  {
+public class DemoBean implements Serializable {
 
     private Part fichero;
     private String nombre;
 
     /**
      * Sube un fichero al servidor
-     * @return devolvemos cadena vacia para no redirigir a otra pagina
+     *
+     * @return boolean devuelve true si cumple expresion regular
      * @throws IOException errir lectura/escritura
      */
-    public String upload() throws IOException {
-     
-        final FacesContext facesContext=FacesContext.getCurrentInstance();
-        final ExternalContext externalContext=facesContext.getExternalContext();
-        //Stream de entrada
-        InputStream inputStream = fichero.getInputStream();
-        //Fichero de salida
-        FileOutputStream outputStream;
-        //construimos el fichero en la ruta del servidor /resources/images/
-        outputStream= new FileOutputStream(externalContext.getRealPath("/")+"/resources/images/" + getFilename(fichero));
-        
-        //Leemos el buffer de entrada y escribimos en nustro fichero.
-        byte[] buffer = new byte[4096];
-        int bytesRead = 0;
-        while (true) {
-            bytesRead = inputStream.read(buffer);
-            if (bytesRead > 0) {
-                outputStream.write(buffer, 0, bytesRead);
-            } else {
-                break;
+    public boolean upload() throws IOException {
+        String img = getFilename(fichero);
+        if (img.matches("([^\\s]+(\\.(?i)(jpg|png|gif|bmp))$)")) {
+            final FacesContext facesContext = FacesContext.getCurrentInstance();
+            final ExternalContext externalContext = facesContext.getExternalContext();
+            //Stream de entrada
+            InputStream inputStream = fichero.getInputStream();
+            //Fichero de salida
+            FileOutputStream outputStream;
+            //construimos el fichero en la ruta del servidor /resources/images/
+            outputStream = new FileOutputStream(externalContext.getRealPath("/")
+                    + "/resources/images/" + getFilename(fichero));
+
+            //Leemos el buffer de entrada y escribimos en nustro fichero.
+            byte[] buffer = new byte[4096];
+            int bytesRead = 0;
+            while (true) {
+                bytesRead = inputStream.read(buffer);
+                if (bytesRead > 0) {
+                    outputStream.write(buffer, 0, bytesRead);
+                } else {
+                    break;
+                }
             }
+            outputStream.close();
+            inputStream.close();
+
+            setNombre(getFilename(fichero));
+            return true;
         }
-        outputStream.close();
-        inputStream.close();
-        
-        setNombre(getFilename(fichero));
-       
-        return "";
+        return false;
     }
+
     /**
      * Sube un fichero al servidor
+     *
      * @param n nombre del fichero
-     * @return devolvemos cadena vacia para no redirigir a otra pagina
+     * @return boolean devuelve true si cumple expresion regular
      * @throws IOException errir lectura/escritura
      */
-    public String upload(String n) throws IOException {
-        String extension = "";
+    public boolean upload(String n) throws IOException {
+        String img = getFilename(fichero);
+        
+        
+        
+        if (img.matches("([^\\s]+(\\.(?i)(jpg|png|gif|bmp))$)")) {
 
-        int i = getFilename(fichero).lastIndexOf('.');
-        if (i > 0) {
-            extension = getFilename(fichero).substring(i+1);
-        }
-        
-        final FacesContext facesContext=FacesContext.getCurrentInstance();
-        final ExternalContext externalContext=facesContext.getExternalContext();
-        //Stream de entrada
-        InputStream inputStream = fichero.getInputStream();
-        //Fichero de salida
-        FileOutputStream outputStream;
-        //construimos el fichero en la ruta del servidor /resources/images/
-        outputStream= new FileOutputStream(externalContext.getRealPath("/")+"/resources/images/" + n + "." +extension);
-        
-        //Leemos el buffer de entrada y escribimos en nustro fichero.
-        byte[] buffer = new byte[4096];
-        int bytesRead = 0;
-        while (true) {
-            bytesRead = inputStream.read(buffer);
-            if (bytesRead > 0) {
-                outputStream.write(buffer, 0, bytesRead);
-            } else {
-                break;
+            
+            
+            
+            
+            
+            String extension = "";
+            //Devuelve el último índice, diviendo por puntos
+            int i = getFilename(fichero).lastIndexOf('.'); 
+            //Si tiene almenos un punto
+            if (i > 0) {
+            //Guardamos la extension    
+                extension = getFilename(fichero).substring(i + 1);
             }
+
+            final FacesContext facesContext = FacesContext.getCurrentInstance();
+            final ExternalContext externalContext = facesContext.getExternalContext();
+            //Stream de entrada
+            InputStream inputStream = fichero.getInputStream();
+            //Fichero de salida
+            FileOutputStream outputStream;
+            //construimos el fichero en la ruta del servidor /resources/images/
+            outputStream = new FileOutputStream(externalContext.getRealPath("/") + "/resources/images/" + n + "." + extension);
+
+            //Leemos el buffer de entrada y escribimos en nustro fichero.
+            byte[] buffer = new byte[4096];
+            int bytesRead = 0;
+            while (true) {
+                bytesRead = inputStream.read(buffer);
+                if (bytesRead > 0) {
+                    outputStream.write(buffer, 0, bytesRead);
+                } else {
+                    break;
+                }
+            }
+            outputStream.close();
+            inputStream.close();
+            setNombre(n + "." + extension);
+            
+            
+            return true;
         }
-        outputStream.close();
-        inputStream.close();
-        
-        setNombre(n+"."+extension);
-       
-        return "";
+        return false;
     }
+
     /**
-     * 
+     *
      * @param part
-     * @return 
+     * @return
      */
     private static String getFilename(Part part) {
         for (String cd : part.getHeader("content-disposition").split(";")) {
@@ -122,5 +143,5 @@ public class DemoBean implements Serializable  {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }   
+    }
 }
