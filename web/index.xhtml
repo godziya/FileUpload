@@ -4,17 +4,18 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui">
     <h:head>
-        <title>Facelet Title</title>
+        <title>Subir Fichero al servidor</title>
     </h:head>
     <h:body>
-        Hello from Facelets
+        Subir fichero
         
         <h:form  enctype="multipart/form-data">
-            <h:inputFile value="#{demoBean.file1}" /><br/>
+            <h:inputFile value="#{demoBean.fichero}" /><br/>
                
-            <h:commandButton value="Upload" action="#{demoBean.upload()}"/>
+            <h:commandButton value="Upload" action="#{demoBean.upload('mifoto25')}"/>
         </h:form>
-        <h:graphicImage library="images" name="#{demoBean.foto}" />
+        <h:graphicImage library="images" name="#{demoBean.nombre}" />
+        <h:outputLabel value="#{demoBean.nombre}" />
     </h:body>
 </html>
 

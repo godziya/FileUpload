@@ -1,62 +1,40 @@
 package daw;
 
-
-import static com.sun.corba.se.spi.presentation.rmi.StubAdapter.request;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.servlet.http.Part;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-/**
- *
- * @author ramki
- */
+
 @Named
 @ViewScoped
 public class DemoBean implements Serializable  {
 
-    private Part file1;
-    private Part file2;
-    private File file;
-    private String foto;
-    private Part uploadedFile;
+    private Part fichero;
+    private String nombre;
 
-    public Part getFile1() {
-        return file1;
-    }
-
-    public void setFile1(Part file1) {
-        this.file1 = file1;
-    }
-
-    public Part getFile2() {
-        return file2;
-    }
-
-    public void setFile2(Part file2) {
-        this.file2 = file2;
-    }
-
+    /**
+     * Sube un fichero al servidor
+     * @return devolvemos cadena vacia para no redirigir a otra pagina
+     * @throws IOException errir lectura/escritura
+     */
     public String upload() throws IOException {
-
+     
         final FacesContext facesContext=FacesContext.getCurrentInstance();
         final ExternalContext externalContext=facesContext.getExternalContext();
-        InputStream inputStream = file1.getInputStream();
-        FileOutputStream outputStream = new FileOutputStream(externalContext.getRealPath("/")+"/resources/images/" + getFilename(file1));
+        //Stream de entrada
+        InputStream inputStream = fichero.getInputStream();
+        //Fichero de salida
+        FileOutputStream outputStream;
+        //construimos el fichero en la ruta del servidor /resources/images/
+        outputStream= new FileOutputStream(externalContext.getRealPath("/")+"/resources/images/" + getFilename(fichero));
+        
+        //Leemos el buffer de entrada y escribimos en nustro fichero.
         byte[] buffer = new byte[4096];
         int bytesRead = 0;
         while (true) {
@@ -67,12 +45,59 @@ public class DemoBean implements Serializable  {
                 break;
             }
         }
-       outputStream.close();
-       inputStream.close();
-           setFoto(getFilename(file1));
+        outputStream.close();
+        inputStream.close();
+        
+        setNombre(getFilename(fichero));
+       
         return "";
     }
+    /**
+     * Sube un fichero al servidor
+     * @param n nombre del fichero
+     * @return devolvemos cadena vacia para no redirigir a otra pagina
+     * @throws IOException errir lectura/escritura
+     */
+    public String upload(String n) throws IOException {
+        String extension = "";
 
+        int i = getFilename(fichero).lastIndexOf('.');
+        if (i > 0) {
+            extension = getFilename(fichero).substring(i+1);
+        }
+        
+        final FacesContext facesContext=FacesContext.getCurrentInstance();
+        final ExternalContext externalContext=facesContext.getExternalContext();
+        //Stream de entrada
+        InputStream inputStream = fichero.getInputStream();
+        //Fichero de salida
+        FileOutputStream outputStream;
+        //construimos el fichero en la ruta del servidor /resources/images/
+        outputStream= new FileOutputStream(externalContext.getRealPath("/")+"/resources/images/" + n + "." +extension);
+        
+        //Leemos el buffer de entrada y escribimos en nustro fichero.
+        byte[] buffer = new byte[4096];
+        int bytesRead = 0;
+        while (true) {
+            bytesRead = inputStream.read(buffer);
+            if (bytesRead > 0) {
+                outputStream.write(buffer, 0, bytesRead);
+            } else {
+                break;
+            }
+        }
+        outputStream.close();
+        inputStream.close();
+        
+        setNombre(n);
+       
+        return "";
+    }
+    /**
+     * 
+     * @param part
+     * @return 
+     */
     private static String getFilename(Part part) {
         for (String cd : part.getHeader("content-disposition").split(";")) {
             if (cd.trim().startsWith("filename")) {
@@ -83,18 +108,19 @@ public class DemoBean implements Serializable  {
         return null;
     }
 
-    /**
-     * @return the foto
-     */
-    public String getFoto() {
-        return foto;
+    public Part getFichero() {
+        return fichero;
     }
 
-    /**
-     * @param foto the foto to set
-     */
-    public void setFoto(String foto) {
-        this.foto = foto;
+    public void setFichero(Part fichero) {
+        this.fichero = fichero;
     }
-    
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }   
 }
